@@ -73,15 +73,15 @@ li $a0 12
 jal mem_alloc
 
 # SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
-la $t1 type_name_0
+la $t1 type_name_45
 sw $t1 0($a0)
 
 # SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
-la $t1 copy_1
+la $t1 copy_46
 sw $t1 4($a0)
 
 # SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
-la $t1 abort_2
+la $t1 abort_47
 sw $t1 8($a0)
 
 
@@ -111,15 +111,15 @@ li $a0 12
 jal mem_alloc
 
 # SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
-la $t1 type_name_0
+la $t1 type_name_45
 sw $t1 0($a0)
 
 # SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
-la $t1 copy_1
+la $t1 copy_46
 sw $t1 4($a0)
 
 # SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
-la $t1 abort_2
+la $t1 abort_47
 sw $t1 8($a0)
 
 
@@ -149,15 +149,15 @@ li $a0 12
 jal mem_alloc
 
 # SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
-la $t1 type_name_0
+la $t1 type_name_45
 sw $t1 0($a0)
 
 # SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
-la $t1 copy_1
+la $t1 copy_46
 sw $t1 4($a0)
 
 # SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
-la $t1 abort_2
+la $t1 abort_47
 sw $t1 8($a0)
 
 
@@ -187,27 +187,27 @@ li $a0 24
 jal mem_alloc
 
 # SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
-la $t1 type_name_0
+la $t1 type_name_45
 sw $t1 0($a0)
 
 # SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
-la $t1 copy_1
+la $t1 copy_46
 sw $t1 4($a0)
 
 # SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
-la $t1 abort_2
+la $t1 abort_47
 sw $t1 8($a0)
 
 # SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
-la $t1 concat_3
+la $t1 concat_48
 sw $t1 12($a0)
 
 # SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
-la $t1 substr_4
+la $t1 substr_49
 sw $t1 16($a0)
 
 # SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
-la $t1 length_5
+la $t1 length_50
 sw $t1 20($a0)
 
 
@@ -237,31 +237,31 @@ li $a0 28
 jal mem_alloc
 
 # SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
-la $t1 type_name_0
+la $t1 type_name_45
 sw $t1 0($a0)
 
 # SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
-la $t1 copy_1
+la $t1 copy_46
 sw $t1 4($a0)
 
 # SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
-la $t1 abort_2
+la $t1 abort_47
 sw $t1 8($a0)
 
 # SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
-la $t1 out_string_6
+la $t1 out_string_51
 sw $t1 12($a0)
 
 # SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
-la $t1 out_int_7
+la $t1 out_int_52
 sw $t1 16($a0)
 
 # SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
-la $t1 in_string_8
+la $t1 in_string_53
 sw $t1 20($a0)
 
 # SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
-la $t1 in_int_9
+la $t1 in_int_54
 sw $t1 24($a0)
 
 
@@ -278,37 +278,33 @@ lw $t0 8($s6)
 sw $t0 20($s4)
 
 #Main
-li $a0 16 #reservo mem para Main
+li $a0 12 #reservo mem para Main
 jal mem_alloc
 move $t0 $a0
 li $t1 6
 sw $t1 ($t0)
-li $t1 16
+li $t1 12
 sw $t1 4($t0) # guardo el size
 
 # CREATING VIRTUAL TABLE METHOD
-li $a0 20
+li $a0 16
 jal mem_alloc
 
 # SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
-la $t1 type_name_0
+la $t1 type_name_45
 sw $t1 0($a0)
 
 # SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
-la $t1 copy_1
+la $t1 copy_46
 sw $t1 4($a0)
 
 # SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
-la $t1 abort_2
+la $t1 abort_47
 sw $t1 8($a0)
 
 # SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
-la $t1 sum_10
+la $t1 main_55
 sw $t1 12($a0)
-
-# SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
-la $t1 main_11
-sw $t1 16($a0)
 
 
 sw $a0 8($t0)
@@ -338,7 +334,7 @@ jalr $t0
 addi $sp $sp -8
 lw $t0 48($s6)
 lw $t0 8($t0)
-lw $t0 16($t0)
+lw $t0 12($t0)
 jalr $t0
 lw $a0 12($a0)
 b _end_main
@@ -370,7 +366,7 @@ lw $fp 8($fp)
 addi $sp $sp 12
 jr $ra
 
-type_name_0:
+type_name_45:
 # PUSHING $ra
 sw $ra 0($sp)
 addiu $sp $sp -4
@@ -431,7 +427,7 @@ lw $fp 8($fp)
 addi $sp $sp 16
 jr $ra
 
-copy_1:
+copy_46:
 # PUSHING $ra
 sw $ra 0($sp)
 addiu $sp $sp -4
@@ -456,7 +452,7 @@ lw $fp 8($fp)
 addi $sp $sp 16
 jr $ra
 
-abort_2:
+abort_47:
 # PUSHING $ra
 sw $ra 0($sp)
 addiu $sp $sp -4
@@ -549,7 +545,7 @@ lw $fp 8($fp)
 addi $sp $sp 12
 jr $ra
 
-concat_3:
+concat_48:
 # PUSHING $ra
 sw $ra 0($sp)
 addiu $sp $sp -4
@@ -571,7 +567,7 @@ lw $fp 8($fp)
 addi $sp $sp 20
 jr $ra
 
-substr_4:
+substr_49:
 # PUSHING $ra
 sw $ra 0($sp)
 addiu $sp $sp -4
@@ -594,7 +590,7 @@ lw $fp 8($fp)
 addi $sp $sp 24
 jr $ra
 
-length_5:
+length_50:
 # PUSHING $ra
 sw $ra 0($sp)
 addiu $sp $sp -4
@@ -629,7 +625,7 @@ lw $fp 8($fp)
 addi $sp $sp 12
 jr $ra
 
-out_string_6:
+out_string_51:
 # PUSHING $ra
 sw $ra 0($sp)
 addiu $sp $sp -4
@@ -651,7 +647,7 @@ lw $fp 8($fp)
 addi $sp $sp 16
 jr $ra
 
-out_int_7:
+out_int_52:
 # PUSHING $ra
 sw $ra 0($sp)
 addiu $sp $sp -4
@@ -673,7 +669,7 @@ lw $fp 8($fp)
 addi $sp $sp 16
 jr $ra
 
-in_string_8:
+in_string_53:
 # PUSHING $ra
 sw $ra 0($sp)
 addiu $sp $sp -4
@@ -732,7 +728,7 @@ lw $fp 8($fp)
 addi $sp $sp 16
 jr $ra
 
-in_int_9:
+in_int_54:
 # PUSHING $ra
 sw $ra 0($sp)
 addiu $sp $sp -4
@@ -767,8 +763,47 @@ addiu $sp $sp -4
 
 move $fp $sp
 
-addi $sp $sp -28
-lw $t0 12($fp)
+addi $sp $sp 0
+lw $ra 4($fp)
+lw $fp 8($fp)
+addi $sp $sp 12
+jr $ra
+
+main_55:
+# PUSHING $ra
+sw $ra 0($sp)
+addiu $sp $sp -4
+
+move $fp $sp
+
+addi $sp $sp -20
+# ALLOCATE TYPE (MAKES A COPY OF THE TYPE PROTOTYPE)
+lw $a0 16($s6)
+jal obj_copy
+sw $a0 -4($fp)
+
+lw $t0 -4($fp)
+
+# PUSHING $t0
+sw $t0 0($sp)
+addiu $sp $sp -4
+
+# DYNAMIC CALL
+lw $v0 4($sp)
+# PUSHING $fp
+sw $fp 0($sp)
+addiu $sp $sp -4
+lw $t0 20($s6)
+jalr $t0
+sw $a0 -8($fp)
+
+# SET-ATTR A.Y = X (STORES X AS THE ATTR OF OFFSET Y OF INSTANCE A)
+lw $t1 -4($fp)
+addi $t1 $t1 12
+
+li $t0 13
+sw $t0 ($t1)
+lw $t0 -4($fp)
 lw $t0 ($t0)
 
 sll $t0 $t0 3
@@ -776,89 +811,25 @@ move $t1 $s6
 add $t0 $t0 $t1
 lw $t0 ($t0)
 
-sw $t0 -4($fp)
+sw $t0 -12($fp)
 
 # IS TYPE
 li $t0 0
-lw $t1 -4($fp)
+lw $t1 -12($fp)
 lw $t1 ($t1)
 seq $t2 $t1 $t0
 # CREATE A NEW BOOL PROTOYPE IN HEAP AND STORE ITS VALUE
 lw $a0 24($s6)
 jal obj_copy
 sw $t2 12($a0)
-sw $a0 -8($fp)
+sw $a0 -16($fp)
 
 # IF X(BOOL) GOTO DIR(label_0)
-lw $t0 -8($fp)
+lw $t0 -16($fp)
 lw $t0 12($t0)
 bnez $t0 label_0
 
-# ALLOCATE TYPE (MAKES A COPY OF THE TYPE PROTOTYPE)
-lw $a0 16($s6)
-jal obj_copy
-sw $a0 -12($fp)
-
-lw $t0 -12($fp)
-
-# PUSHING $t0
-sw $t0 0($sp)
-addiu $sp $sp -4
-
-# DYNAMIC CALL
-lw $v0 4($sp)
-# PUSHING $fp
-sw $fp 0($sp)
-addiu $sp $sp -4
-lw $t0 20($s6)
-jalr $t0
-sw $a0 -16($fp)
-
-# SET-ATTR A.Y = X (STORES X AS THE ATTR OF OFFSET Y OF INSTANCE A)
-lw $t1 -12($fp)
-addi $t1 $t1 12
-
-li $t0 1
-sw $t0 ($t1)
-# ALLOCATE TYPE (MAKES A COPY OF THE TYPE PROTOTYPE)
-lw $a0 16($s6)
-jal obj_copy
-sw $a0 -20($fp)
-
-lw $t0 -20($fp)
-
-# PUSHING $t0
-sw $t0 0($sp)
-addiu $sp $sp -4
-
-# DYNAMIC CALL
-lw $v0 4($sp)
-# PUSHING $fp
-sw $fp 0($sp)
-addiu $sp $sp -4
-lw $t0 20($s6)
-jalr $t0
-sw $a0 -24($fp)
-
-# SET-ATTR A.Y = X (STORES X AS THE ATTR OF OFFSET Y OF INSTANCE A)
-lw $t1 -20($fp)
-addi $t1 $t1 12
-
-li $t0 11
-sw $t0 ($t1)
-lw $t0 -20($fp)
-
-# PUSHING $t0
-sw $t0 0($sp)
-addiu $sp $sp -4
-
-lw $t0 -12($fp)
-
-# PUSHING $t0
-sw $t0 0($sp)
-addiu $sp $sp -4
-
-lw $t0 12($fp)
+lw $t0 -4($fp)
 
 # PUSHING $t0
 sw $t0 0($sp)
@@ -870,7 +841,7 @@ lw $v0 4($sp)
 sw $fp 0($sp)
 addiu $sp $sp -4
 lw $v0 8($v0)
-lw $v0 12($v0)
+lw $v0 8($v0)
 jalr $v0
 sw $a0 0($fp)
 
@@ -900,108 +871,12 @@ b label_1
 
 label_1:
 
-# SET-ATTR A.Y = X (STORES X AS THE ATTR OF OFFSET Y OF INSTANCE A)
-lw $t1 12($fp)
-addi $t1 $t1 12
-
-lw $t2 0($fp)
-sw $t2 ($t1)
-
-lw $ra 4($fp)
-lw $fp 8($fp)
-addi $sp $sp 40
-jr $ra
-
-sum_10:
-# PUSHING $ra
-sw $ra 0($sp)
-addiu $sp $sp -4
-
-move $fp $sp
-
-addi $sp $sp -16
-# ALLOCATE TYPE (MAKES A COPY OF THE TYPE PROTOTYPE)
-lw $a0 16($s6)
-jal obj_copy
-sw $a0 0($fp)
-
-lw $t0 0($fp)
-
-# PUSHING $t0
-sw $t0 0($sp)
-addiu $sp $sp -4
-
-# DYNAMIC CALL
-lw $v0 4($sp)
-# PUSHING $fp
-sw $fp 0($sp)
-addiu $sp $sp -4
-lw $t0 20($s6)
-jalr $t0
-sw $a0 -4($fp)
-
-# SET-ATTR A.Y = X (STORES X AS THE ATTR OF OFFSET Y OF INSTANCE A)
-lw $t1 0($fp)
-addi $t1 $t1 12
-
-li $t0 1
-sw $t0 ($t1)
-# PLUS NODE
-lw $t1 20($fp)
-lw $t1 12($t1)
-lw $t2 0($fp)
-lw $t2 12($t2)
-add $t1 $t1 $t2
-
-# CREATE A NEW INT PROTOYPE IN HEAP AND STORE ITS VALUE
-lw $a0 16($s6)
-jal obj_copy
-sw $t1 12($a0)
-
-sw $a0 -8($fp)
-
-# PLUS NODE
-lw $t1 16($fp)
-lw $t1 12($t1)
-lw $t2 -8($fp)
-lw $t2 12($t2)
-add $t1 $t1 $t2
-
-# CREATE A NEW INT PROTOYPE IN HEAP AND STORE ITS VALUE
-lw $a0 16($s6)
-jal obj_copy
-sw $t1 12($a0)
-
-sw $a0 -12($fp)
-
-# SAVES IN $a0 THE RETURN VALUE
-lw $a0 -12($fp)
-
-lw $ra 4($fp)
-lw $fp 8($fp)
-addi $sp $sp 36
-jr $ra
-
-main_11:
-# PUSHING $ra
-sw $ra 0($sp)
-addiu $sp $sp -4
-
-move $fp $sp
-
-addi $sp $sp -4
-# GET-ATTR X = T.Y (SAVES IN X THE ATTR OF OFFSET Y OF T)
-lw $t0 12($fp)
-addi $t0 $t0 12
-lw $t0 ($t0)
-sw $t0 0($fp)
-
 # SAVES IN $a0 THE RETURN VALUE
 lw $a0 0($fp)
 
 lw $ra 4($fp)
 lw $fp 8($fp)
-addi $sp $sp 16
+addi $sp $sp 32
 jr $ra
 
 # CREATING SOME UTIL FUNCTIONS

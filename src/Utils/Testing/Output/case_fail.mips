@@ -11,24 +11,28 @@ _Bool: .asciiz "Bool"
 _String: .asciiz "String"
 _IO: .asciiz "IO"
 _Main: .asciiz "Main"
+_A: .asciiz "A"
+_B: .asciiz "B"
 # VISITING ALL THE DATA NODES
 data_0: .asciiz ""
+data_1: .asciiz "Es A"
+data_2: .asciiz "Es B"
 .text
 main:
 move $s7 $gp
 addi $s7 $s7 30000
 # SAVE A REFERENCE TO ALL THE PROTOTYPES IN $s6
-li $a0 56
+li $a0 72
 jal mem_alloc
 move $s6 $a0
 
 # SAVE A REFERENCE TO ALL THE TYPES-NAMES IN $s5
-li $a0 28
+li $a0 36
 jal mem_alloc
 move $s5 $a0
 
 # SAVE A REFERENCE TO ALL THE PARENTS PROTOTYPES IN $s4
-li $a0 28
+li $a0 36
 jal mem_alloc
 move $s4 $a0
 
@@ -287,7 +291,7 @@ li $t1 16
 sw $t1 4($t0) # guardo el size
 
 # CREATING VIRTUAL TABLE METHOD
-li $a0 20
+li $a0 16
 jal mem_alloc
 
 # SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
@@ -303,12 +307,8 @@ la $t1 abort_2
 sw $t1 8($a0)
 
 # SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
-la $t1 sum_10
+la $t1 main_10
 sw $t1 12($a0)
-
-# SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
-la $t1 main_11
-sw $t1 16($a0)
 
 
 sw $a0 8($t0)
@@ -322,6 +322,82 @@ sw $t0 24($s5)
 
 lw $t0 8($s6)
 sw $t0 24($s4)
+
+#A
+li $a0 12 #reservo mem para A
+jal mem_alloc
+move $t0 $a0
+li $t1 7
+sw $t1 ($t0)
+li $t1 12
+sw $t1 4($t0) # guardo el size
+
+# CREATING VIRTUAL TABLE METHOD
+li $a0 12
+jal mem_alloc
+
+# SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
+la $t1 type_name_0
+sw $t1 0($a0)
+
+# SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
+la $t1 copy_1
+sw $t1 4($a0)
+
+# SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
+la $t1 abort_2
+sw $t1 8($a0)
+
+
+sw $a0 8($t0)
+sw $t0 56($s6)
+
+la $t0 ctor_A
+sw $t0 60($s6)
+
+la $t0 _A
+sw $t0 28($s5)
+
+lw $t0 8($s6)
+sw $t0 28($s4)
+
+#B
+li $a0 12 #reservo mem para B
+jal mem_alloc
+move $t0 $a0
+li $t1 8
+sw $t1 ($t0)
+li $t1 12
+sw $t1 4($t0) # guardo el size
+
+# CREATING VIRTUAL TABLE METHOD
+li $a0 12
+jal mem_alloc
+
+# SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
+la $t1 type_name_0
+sw $t1 0($a0)
+
+# SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
+la $t1 copy_1
+sw $t1 4($a0)
+
+# SAVING THE OFFSET OF EVERY FUNCTION IN THE TYPE
+la $t1 abort_2
+sw $t1 8($a0)
+
+
+sw $a0 8($t0)
+sw $t0 64($s6)
+
+la $t0 ctor_B
+sw $t0 68($s6)
+
+la $t0 _B
+sw $t0 32($s5)
+
+lw $t0 56($s6)
+sw $t0 32($s4)
 
 #empieza esta pinga
 lw $a0 48($s6)
@@ -338,7 +414,7 @@ jalr $t0
 addi $sp $sp -8
 lw $t0 48($s6)
 lw $t0 8($t0)
-lw $t0 16($t0)
+lw $t0 12($t0)
 jalr $t0
 lw $a0 12($a0)
 b _end_main
@@ -767,161 +843,9 @@ addiu $sp $sp -4
 
 move $fp $sp
 
-addi $sp $sp -28
-lw $t0 12($fp)
-lw $t0 ($t0)
-
-sll $t0 $t0 3
-move $t1 $s6
-add $t0 $t0 $t1
-lw $t0 ($t0)
-
-sw $t0 -4($fp)
-
-# IS TYPE
-li $t0 0
-lw $t1 -4($fp)
-lw $t1 ($t1)
-seq $t2 $t1 $t0
-# CREATE A NEW BOOL PROTOYPE IN HEAP AND STORE ITS VALUE
-lw $a0 24($s6)
-jal obj_copy
-sw $t2 12($a0)
-sw $a0 -8($fp)
-
-# IF X(BOOL) GOTO DIR(label_0)
-lw $t0 -8($fp)
-lw $t0 12($t0)
-bnez $t0 label_0
-
+addi $sp $sp -8
 # ALLOCATE TYPE (MAKES A COPY OF THE TYPE PROTOTYPE)
-lw $a0 16($s6)
-jal obj_copy
-sw $a0 -12($fp)
-
-lw $t0 -12($fp)
-
-# PUSHING $t0
-sw $t0 0($sp)
-addiu $sp $sp -4
-
-# DYNAMIC CALL
-lw $v0 4($sp)
-# PUSHING $fp
-sw $fp 0($sp)
-addiu $sp $sp -4
-lw $t0 20($s6)
-jalr $t0
-sw $a0 -16($fp)
-
-# SET-ATTR A.Y = X (STORES X AS THE ATTR OF OFFSET Y OF INSTANCE A)
-lw $t1 -12($fp)
-addi $t1 $t1 12
-
-li $t0 1
-sw $t0 ($t1)
-# ALLOCATE TYPE (MAKES A COPY OF THE TYPE PROTOTYPE)
-lw $a0 16($s6)
-jal obj_copy
-sw $a0 -20($fp)
-
-lw $t0 -20($fp)
-
-# PUSHING $t0
-sw $t0 0($sp)
-addiu $sp $sp -4
-
-# DYNAMIC CALL
-lw $v0 4($sp)
-# PUSHING $fp
-sw $fp 0($sp)
-addiu $sp $sp -4
-lw $t0 20($s6)
-jalr $t0
-sw $a0 -24($fp)
-
-# SET-ATTR A.Y = X (STORES X AS THE ATTR OF OFFSET Y OF INSTANCE A)
-lw $t1 -20($fp)
-addi $t1 $t1 12
-
-li $t0 11
-sw $t0 ($t1)
-lw $t0 -20($fp)
-
-# PUSHING $t0
-sw $t0 0($sp)
-addiu $sp $sp -4
-
-lw $t0 -12($fp)
-
-# PUSHING $t0
-sw $t0 0($sp)
-addiu $sp $sp -4
-
-lw $t0 12($fp)
-
-# PUSHING $t0
-sw $t0 0($sp)
-addiu $sp $sp -4
-
-# DYNAMIC CALL
-lw $v0 4($sp)
-# PUSHING $fp
-sw $fp 0($sp)
-addiu $sp $sp -4
-lw $v0 8($v0)
-lw $v0 12($v0)
-jalr $v0
-sw $a0 0($fp)
-
-# GOTO
-b label_1
-
-label_0:
-
-lw $t0 12($fp)
-
-# PUSHING $t0
-sw $t0 0($sp)
-addiu $sp $sp -4
-
-# DYNAMIC CALL
-lw $v0 4($sp)
-# PUSHING $fp
-sw $fp 0($sp)
-addiu $sp $sp -4
-lw $v0 8($v0)
-lw $v0 8($v0)
-jalr $v0
-sw $a0 0($fp)
-
-# GOTO
-b label_1
-
-label_1:
-
-# SET-ATTR A.Y = X (STORES X AS THE ATTR OF OFFSET Y OF INSTANCE A)
-lw $t1 12($fp)
-addi $t1 $t1 12
-
-lw $t2 0($fp)
-sw $t2 ($t1)
-
-lw $ra 4($fp)
-lw $fp 8($fp)
-addi $sp $sp 40
-jr $ra
-
-sum_10:
-# PUSHING $ra
-sw $ra 0($sp)
-addiu $sp $sp -4
-
-move $fp $sp
-
-addi $sp $sp -16
-# ALLOCATE TYPE (MAKES A COPY OF THE TYPE PROTOTYPE)
-lw $a0 16($s6)
+lw $a0 0($s6)
 jal obj_copy
 sw $a0 0($fp)
 
@@ -936,72 +860,478 @@ lw $v0 4($sp)
 # PUSHING $fp
 sw $fp 0($sp)
 addiu $sp $sp -4
-lw $t0 20($s6)
+lw $t0 4($s6)
 jalr $t0
 sw $a0 -4($fp)
 
 # SET-ATTR A.Y = X (STORES X AS THE ATTR OF OFFSET Y OF INSTANCE A)
-lw $t1 0($fp)
+lw $t1 12($fp)
 addi $t1 $t1 12
 
-li $t0 1
-sw $t0 ($t1)
-# PLUS NODE
-lw $t1 20($fp)
-lw $t1 12($t1)
 lw $t2 0($fp)
-lw $t2 12($t2)
-add $t1 $t1 $t2
-
-# CREATE A NEW INT PROTOYPE IN HEAP AND STORE ITS VALUE
-lw $a0 16($s6)
-jal obj_copy
-sw $t1 12($a0)
-
-sw $a0 -8($fp)
-
-# PLUS NODE
-lw $t1 16($fp)
-lw $t1 12($t1)
-lw $t2 -8($fp)
-lw $t2 12($t2)
-add $t1 $t1 $t2
-
-# CREATE A NEW INT PROTOYPE IN HEAP AND STORE ITS VALUE
-lw $a0 16($s6)
-jal obj_copy
-sw $t1 12($a0)
-
-sw $a0 -12($fp)
-
-# SAVES IN $a0 THE RETURN VALUE
-lw $a0 -12($fp)
+sw $t2 ($t1)
 
 lw $ra 4($fp)
 lw $fp 8($fp)
-addi $sp $sp 36
+addi $sp $sp 20
 jr $ra
 
-main_11:
+main_10:
 # PUSHING $ra
 sw $ra 0($sp)
 addiu $sp $sp -4
 
 move $fp $sp
 
-addi $sp $sp -4
+addi $sp $sp -100
 # GET-ATTR X = T.Y (SAVES IN X THE ATTR OF OFFSET Y OF T)
 lw $t0 12($fp)
 addi $t0 $t0 12
 lw $t0 ($t0)
 sw $t0 0($fp)
 
+lw $t0 0($fp)
+lw $t0 ($t0)
+
+sll $t0 $t0 3
+move $t1 $s6
+add $t0 $t0 $t1
+lw $t0 ($t0)
+
+sw $t0 -4($fp)
+
+label_0:
+
+# IS TYPE
+li $t0 0
+lw $t1 -4($fp)
+lw $t1 ($t1)
+seq $t2 $t1 $t0
+# CREATE A NEW BOOL PROTOYPE IN HEAP AND STORE ITS VALUE
+lw $a0 24($s6)
+jal obj_copy
+sw $t2 12($a0)
+sw $a0 -12($fp)
+
+# IF X(BOOL) GOTO DIR(label_2)
+lw $t0 -12($fp)
+lw $t0 12($t0)
+bnez $t0 label_2
+
+# IS TYPE
+li $t0 7
+lw $t1 -4($fp)
+lw $t1 ($t1)
+seq $t2 $t1 $t0
+# CREATE A NEW BOOL PROTOYPE IN HEAP AND STORE ITS VALUE
+lw $a0 24($s6)
+jal obj_copy
+sw $t2 12($a0)
+sw $a0 -16($fp)
+
+# IF X(BOOL) GOTO DIR(label_3)
+lw $t0 -16($fp)
+lw $t0 12($t0)
+bnez $t0 label_3
+
+# GOTO
+b label_4
+
+label_3:
+
+# ASSIGN NODE
+lw $t0 0($fp)
+sw $t0 -20($fp)
+
+# ALLOCATE TYPE (MAKES A COPY OF THE TYPE PROTOTYPE)
+lw $a0 40($s6)
+jal obj_copy
+sw $a0 -24($fp)
+
+lw $t0 -24($fp)
+
+# PUSHING $t0
+sw $t0 0($sp)
+addiu $sp $sp -4
+
+# DYNAMIC CALL
+lw $v0 4($sp)
+# PUSHING $fp
+sw $fp 0($sp)
+addiu $sp $sp -4
+lw $t0 44($s6)
+jalr $t0
+sw $a0 -28($fp)
+
+# ASSIGN NODE
+lw $t0 -24($fp)
+sw $t0 -36($fp)
+
+lw $t0 -36($fp)
+lw $t0 ($t0)
+
+sll $t0 $t0 3
+move $t1 $s6
+add $t0 $t0 $t1
+lw $t0 ($t0)
+
+sw $t0 -40($fp)
+
+# IS TYPE
+li $t0 0
+lw $t1 -40($fp)
+lw $t1 ($t1)
+seq $t2 $t1 $t0
+# CREATE A NEW BOOL PROTOYPE IN HEAP AND STORE ITS VALUE
+lw $a0 24($s6)
+jal obj_copy
+sw $t2 12($a0)
+sw $a0 -44($fp)
+
+# IF X(BOOL) GOTO DIR(label_5)
+lw $t0 -44($fp)
+lw $t0 12($t0)
+bnez $t0 label_5
+
+# CMP CREATE A NEW STRING PROTOYPE IN HEAP AND STORE ITS VALUE
+li $a0 24
+jal mem_alloc
+move $a1 $a0
+li $t7 4
+sw $t7 ($a1)
+li $t7 24
+sw $t7 4($a1)
+lw $t7 32($s6)
+lw $t7 8($t7)
+sw $t7 8($a1)
+li $t7 4
+# CREATE A NEW INT PROTOYPE IN HEAP AND STORE ITS VALUE
+lw $a0 16($s6)
+jal obj_copy
+sw $t7 12($a0)
+sw $a0 12($a1)
+li $t7 69
+sb $t7 16($a1)
+li $t7 115
+sb $t7 17($a1)
+li $t7 32
+sb $t7 18($a1)
+li $t7 65
+sb $t7 19($a1)
+li $t7 0
+sb $t7 20($a1)
+move $a0 $a1
+sw $a0 -48($fp)
+
+lw $t0 -48($fp)
+
+# PUSHING $t0
+sw $t0 0($sp)
+addiu $sp $sp -4
+
+lw $t0 -36($fp)
+
+# PUSHING $t0
+sw $t0 0($sp)
+addiu $sp $sp -4
+
+# DYNAMIC CALL
+lw $v0 4($sp)
+# PUSHING $fp
+sw $fp 0($sp)
+addiu $sp $sp -4
+lw $v0 8($v0)
+lw $v0 12($v0)
+jalr $v0
+sw $a0 -32($fp)
+
+# GOTO
+b label_6
+
+label_5:
+
+lw $t0 12($fp)
+
+# PUSHING $t0
+sw $t0 0($sp)
+addiu $sp $sp -4
+
+# DYNAMIC CALL
+lw $v0 4($sp)
+# PUSHING $fp
+sw $fp 0($sp)
+addiu $sp $sp -4
+lw $v0 8($v0)
+lw $v0 8($v0)
+jalr $v0
+sw $a0 -32($fp)
+
+# GOTO
+b label_6
+
+label_6:
+
+# ASSIGN NODE
+lw $t0 -32($fp)
+sw $t0 -8($fp)
+
+# GOTO
+b label_1
+
+label_4:
+
+# IS TYPE
+li $t0 8
+lw $t1 -4($fp)
+lw $t1 ($t1)
+seq $t2 $t1 $t0
+# CREATE A NEW BOOL PROTOYPE IN HEAP AND STORE ITS VALUE
+lw $a0 24($s6)
+jal obj_copy
+sw $t2 12($a0)
+sw $a0 -52($fp)
+
+# IF X(BOOL) GOTO DIR(label_7)
+lw $t0 -52($fp)
+lw $t0 12($t0)
+bnez $t0 label_7
+
+# GOTO
+b label_8
+
+label_7:
+
+# ASSIGN NODE
+lw $t0 0($fp)
+sw $t0 -56($fp)
+
+# ALLOCATE TYPE (MAKES A COPY OF THE TYPE PROTOTYPE)
+lw $a0 40($s6)
+jal obj_copy
+sw $a0 -60($fp)
+
+lw $t0 -60($fp)
+
+# PUSHING $t0
+sw $t0 0($sp)
+addiu $sp $sp -4
+
+# DYNAMIC CALL
+lw $v0 4($sp)
+# PUSHING $fp
+sw $fp 0($sp)
+addiu $sp $sp -4
+lw $t0 44($s6)
+jalr $t0
+sw $a0 -64($fp)
+
+# ASSIGN NODE
+lw $t0 -60($fp)
+sw $t0 -72($fp)
+
+lw $t0 -72($fp)
+lw $t0 ($t0)
+
+sll $t0 $t0 3
+move $t1 $s6
+add $t0 $t0 $t1
+lw $t0 ($t0)
+
+sw $t0 -76($fp)
+
+# IS TYPE
+li $t0 0
+lw $t1 -76($fp)
+lw $t1 ($t1)
+seq $t2 $t1 $t0
+# CREATE A NEW BOOL PROTOYPE IN HEAP AND STORE ITS VALUE
+lw $a0 24($s6)
+jal obj_copy
+sw $t2 12($a0)
+sw $a0 -80($fp)
+
+# IF X(BOOL) GOTO DIR(label_9)
+lw $t0 -80($fp)
+lw $t0 12($t0)
+bnez $t0 label_9
+
+# CMP CREATE A NEW STRING PROTOYPE IN HEAP AND STORE ITS VALUE
+li $a0 24
+jal mem_alloc
+move $a1 $a0
+li $t7 4
+sw $t7 ($a1)
+li $t7 24
+sw $t7 4($a1)
+lw $t7 32($s6)
+lw $t7 8($t7)
+sw $t7 8($a1)
+li $t7 4
+# CREATE A NEW INT PROTOYPE IN HEAP AND STORE ITS VALUE
+lw $a0 16($s6)
+jal obj_copy
+sw $t7 12($a0)
+sw $a0 12($a1)
+li $t7 69
+sb $t7 16($a1)
+li $t7 115
+sb $t7 17($a1)
+li $t7 32
+sb $t7 18($a1)
+li $t7 66
+sb $t7 19($a1)
+li $t7 0
+sb $t7 20($a1)
+move $a0 $a1
+sw $a0 -84($fp)
+
+lw $t0 -84($fp)
+
+# PUSHING $t0
+sw $t0 0($sp)
+addiu $sp $sp -4
+
+lw $t0 -72($fp)
+
+# PUSHING $t0
+sw $t0 0($sp)
+addiu $sp $sp -4
+
+# DYNAMIC CALL
+lw $v0 4($sp)
+# PUSHING $fp
+sw $fp 0($sp)
+addiu $sp $sp -4
+lw $v0 8($v0)
+lw $v0 12($v0)
+jalr $v0
+sw $a0 -68($fp)
+
+# GOTO
+b label_10
+
+label_9:
+
+lw $t0 12($fp)
+
+# PUSHING $t0
+sw $t0 0($sp)
+addiu $sp $sp -4
+
+# DYNAMIC CALL
+lw $v0 4($sp)
+# PUSHING $fp
+sw $fp 0($sp)
+addiu $sp $sp -4
+lw $v0 8($v0)
+lw $v0 8($v0)
+jalr $v0
+sw $a0 -68($fp)
+
+# GOTO
+b label_10
+
+label_10:
+
+# ASSIGN NODE
+lw $t0 -68($fp)
+sw $t0 -8($fp)
+
+# GOTO
+b label_1
+
+label_8:
+
+# PARENT TYPE
+lw $a0 -4($fp)
+jal get_parent_prot
+sw $a0 -88($fp)
+
+# ASSIGN NODE
+lw $t0 -88($fp)
+sw $t0 -4($fp)
+
+# GOTO
+b label_0
+
+label_2:
+
+lw $t0 12($fp)
+
+# PUSHING $t0
+sw $t0 0($sp)
+addiu $sp $sp -4
+
+# DYNAMIC CALL
+lw $v0 4($sp)
+# PUSHING $fp
+sw $fp 0($sp)
+addiu $sp $sp -4
+lw $v0 8($v0)
+lw $v0 8($v0)
+jalr $v0
+sw $a0 -88($fp)
+
+label_1:
+
+# ALLOCATE TYPE (MAKES A COPY OF THE TYPE PROTOTYPE)
+lw $a0 16($s6)
+jal obj_copy
+sw $a0 -92($fp)
+
+lw $t0 -92($fp)
+
+# PUSHING $t0
+sw $t0 0($sp)
+addiu $sp $sp -4
+
+# DYNAMIC CALL
+lw $v0 4($sp)
+# PUSHING $fp
+sw $fp 0($sp)
+addiu $sp $sp -4
+lw $t0 20($s6)
+jalr $t0
+sw $a0 -96($fp)
+
+# SET-ATTR A.Y = X (STORES X AS THE ATTR OF OFFSET Y OF INSTANCE A)
+lw $t1 -92($fp)
+addi $t1 $t1 12
+
+li $t0 5
+sw $t0 ($t1)
 # SAVES IN $a0 THE RETURN VALUE
-lw $a0 0($fp)
+lw $a0 -92($fp)
 
 lw $ra 4($fp)
 lw $fp 8($fp)
-addi $sp $sp 16
+addi $sp $sp 112
+jr $ra
+
+ctor_A:
+# PUSHING $ra
+sw $ra 0($sp)
+addiu $sp $sp -4
+
+move $fp $sp
+
+addi $sp $sp 0
+lw $ra 4($fp)
+lw $fp 8($fp)
+addi $sp $sp 12
+jr $ra
+
+ctor_B:
+# PUSHING $ra
+sw $ra 0($sp)
+addiu $sp $sp -4
+
+move $fp $sp
+
+addi $sp $sp 0
+lw $ra 4($fp)
+lw $fp 8($fp)
+addi $sp $sp 12
 jr $ra
 
 # CREATING SOME UTIL FUNCTIONS

@@ -1,3 +1,4 @@
+import sys
 import Sintax.lexer as lex
 import Sintax.parsing as psr
 import Utils.settings as st
@@ -6,7 +7,7 @@ from GeneratingCIL.CILgenerator import CilGenerator
 from GeneratingMIPS.MIPSgenerator import MipsGenerator
 
 class CoolCompilerX:
-    def __init__(self):
+    def __init__(self, output_file = "Output/output.mips"):
         self.lexer = lex.Lexer()
         self.lexer.build()
         self.parser = psr.CoolParsX()
@@ -15,6 +16,7 @@ class CoolCompilerX:
         self.cgen = None
         self.mgen = None
         self.sematic_analizer = None
+        self.output_file = output_file
 
     def test_lexer(self, code = None):
         if not code:
@@ -51,7 +53,7 @@ class CoolCompilerX:
     def generate_mips(self, program):
         self.mgen = MipsGenerator()
         self.mgen.visit(program)
-        file_name = st.get_output_mips_name("test.asm")
+        file_name = self.output_file
         fd = open(file_name,"w")
         for string in self.mgen.to_data:
             print(string, file = fd)
@@ -64,25 +66,49 @@ class CoolCompilerX:
         self.run_semantics()
         program = self.generate_cil()
         self.generate_mips(program)
-        print("Ya")
 
-testing_code = """
-class Main{
-    x:Int <- sum(1,11);
-    sum(p1:Int,p2:Int):Int{p1 + p2 + 1};
-    main(): Int{
-        {
-        x;
-        }
-    };
-};
+def run_test(testing_directory = st.default_testing_data_dir):
+    st.create_directory(f"{testing_directory}\Output")
+    for dir_code in st.get_testing_data(testing_directory):
+        print(f"\ncompiling {dir_code.name}")
+        fd = open(dir_code,"r")
+        code = fd.read()
+        fd.close()
 
-"""
+        #run compiler
+        try:
+            compiler = CoolCompilerX(f"{testing_directory}\Output\{dir_code.name[0:-2]}mips")
+            compiler.run(code)
+            print(f"Compilation successful \nGenerated file: {testing_directory}Output/{dir_code.name[0:-2]}mips\n")
+        except Exception as e:
+            print(f"Compilation Failed. error: {e}\n")
 
-# fd = open("test.cl")
-# testing_code = fd.read()
-# fd.close()
+if __name__ == "__main__":
+    if len(sys.argv) >= 2:
+        if sys.argv[1] == "-t":
+            testing_directory = None
+            if len(sys.argv) >= 3:
+                testing_directory = sys.argv[2]
 
-a = CoolCompilerX()
-# a.test_lexer()
-a.run(testing_code)
+            run_test(testing_directory) if testing_directory else run_test()
+            exit()
+
+        else:
+            code_dir = sys.argv[1]
+            output_name = None
+            if len(sys.argv) >= 3:
+                output_name = sys.argv[2]
+
+    else:
+        print("usage: python CoolCompilerX <cool-code> [output-file-name]")
+        print("usage: python CoolCompilerX -t [testing-directory]")
+        exit()
+    
+    #extract code from file
+    fd = open(code_dir,"r")
+    code = fd.read()
+    fd.close()
+
+    #run compiler
+    compiler = CoolCompilerX(output_name) if output_name else CoolCompilerX()
+    compiler.run(code)
