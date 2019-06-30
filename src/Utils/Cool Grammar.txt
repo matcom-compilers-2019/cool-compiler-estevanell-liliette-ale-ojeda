@@ -1,0 +1,95 @@
+-----Cool Grammar-----
+
+program : class_list
+
+class_list : class_list class SEMICOLON
+            | class SEMICOLON
+
+class : CLASS TYPE LBRACE features_list_opt RBRACE
+class : CLASS TYPE INHERITS TYPE LBRACE features_list_opt RBRACE
+
+features_list_opt : features_list
+                    | empty
+
+features_list : features_list feature SEMICOLON
+                      | feature SEMICOLON
+
+feature : ID LPAREN params_list RPAREN COLON TYPE LBRACE expression RBRACE
+feature : ID LPAREN RPAREN COLON TYPE LBRACE expression RBRACE
+feature : ID COLON TYPE ASSIGN expression
+feature : ID COLON TYPE
+
+params_list  : params_list COMMA params
+                    | params
+
+params : ID COLON TYPE
+
+expression : ID
+expression : INTEGER
+expression : BOOLEAN
+expression : STRING
+expression : SELF
+expression : LBRACE block_list RBRACE
+
+block_list : block_list expression SEMICOLON
+            | expression SEMICOLON
+
+expression : ID ASSIGN expression
+expression : expression DOT ID LPAREN arguments_list_opt RPAREN
+
+arguments_list_opt : arguments_list
+                    | empty
+
+arguments_list : arguments_list COMMA expression
+                | expression
+
+expression : expression AT TYPE DOT ID LPAREN arguments_list_opt RPAREN
+expression : ID LPAREN arguments_list_opt RPAREN
+
+expression : expression PLUS expression
+            | expression MINUS expression
+            | expression MULTIPLY expression
+            | expression DIVIDE expression
+
+expression : expression LT expression
+            | expression LTEQ expression
+            | expression EQ expression
+
+expression : LPAREN expression RPAREN
+expression : IF expression THEN expression ELSE expression FI
+expression : WHILE expression LOOP expression POOL
+expression : let_expression
+
+let_expression : LET ID COLON TYPE IN expression
+                | nested_lets COMMA LET ID COLON TYPE
+
+let_expression : LET ID COLON TYPE ASSIGN expression COMMA let_expressions_initial IN expression
+                | LET ID COLON TYPE ASSIGN expression IN expression
+
+let_expressions_initial : let_expression_initial_i COMMA let_expressions_initial
+                        | let_expression_initial COMMA let_expressions_initial
+                        | let_expression_initial_i
+                        | let_expression_initial
+
+let_expression_initial_i :  LET ID COLON TYPE ASSIGN expression
+let_expression : LET ID COLON TYPE 
+
+nested_lets : ID COLON TYPE IN expression
+            | nested_lets COMMA ID COLON TYPE
+
+nested_lets : ID COLON TYPE ASSIGN expression IN expression
+            | nested_lets COMMA ID COLON TYPE ASSIGN expression
+
+expression : CASE expression OF actions_list ESAC
+
+actions_list : actions_list action
+            | action
+
+action : ID COLON TYPE ARROW expression SEMICOLON
+
+expression : NEW TYPE
+expression : ISVOID expression
+expression : INT_COMP expression
+expression : NOT expression
+
+empty :
