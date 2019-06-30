@@ -1,0 +1,176 @@
+\documentclass[]{article}
+\usepackage{listings}
+\input{help.tex}
+%opening
+\title{Cool Compiler}
+\author{Alejandro Ojeda Fern\'andez\\Ernesto Estevanell Valladares\\Liliette Chiu Rodr\'iguez\\C-412}
+\date{\dotfill}
+
+\lstset{
+	backgroundcolor = \color{blue!20},
+	frame=none,
+	xleftmargin=5pt,
+	stepnumber=1,
+	numbers=left,
+	numbersep=5pt,
+	numberstyle=\ttfamily\tiny\color[gray]{0.5},
+	belowcaptionskip=\bigskipamount,
+	%captionspos=b,
+	escapeinside={*'}{'*},
+	language=haskell,
+	tabsize=4,
+	emphstyle={\bf},
+	commentstyle=\it,
+	stringstyle=\mdseries\rmfamily,
+	showspaces=false,
+	keywordstyle=\bfseries\rmfamily,
+	columns=flexible,
+	%basicstyle=\small\sffamily,
+	showstringspaces=false,
+	%morecomment=[1]\%,
+}
+
+\begin{document}
+
+\maketitle
+\section{Uso del Compilador}
+El compilador est\'a implementado en Python, por lo que no necesita ser compilado previamente a su uso con el makefile propuesto.
+
+Se ofrecen dos opciones de ejecuci\'on del compilador:
+\begin{itemize}
+	\item Opcion simple (compila un `cool-code`)\\
+	\begin{lstlisting}
+		python CoolCompilerX.py <cool-code> [output-file-name]
+	\end{lstlisting}
+	
+	El compilador act\'ua de una manera esperada. Dado un fichero de c\'odigo COOL se genera c\'odigo MIPS que se guarda en el fichero de salida pasado como par\'ametro.
+	Si no se especifica un fichero de salida entonces se guardar\'a el resultado en el fichero \textbf{Output/output.mips} relativo a la ubicaci\'on del compilador.
+	
+	\item Opci\'on para pruebas m\'ultiples\\
+	\begin{lstlisting}
+		python CoolCompilerX -t [testing-directory]
+	\end{lstlisting}
+	
+	Esta opci\'on es de gran ayuda a la hora de probar un gran conjunto de ficheros de c\'odigo COOL de manera independiente. Primeramente se escanea el directorio de pruebas dado (recursivamente) en b\'usqueda de ficheros de c\'odigo COOL. Luego se compila cada uno de ellos de manera independiente y se almacenan los ficheros generados en el directorio \textbf{Output/} que se crear\'a en el directorio de prueba.
+\end{itemize}
+
+\section{Arquitectura del Compilador}
+El proyecto se divide en los siguientes m\'odulos:
+\begin{enumerate}
+	\item Sintax: Este m\'odulo encierra la l\'ogica para realizar el an\'alisis lexicogr\'afico
+	de un programa de COOL. Contiene un fichero con la definici\'on de la gram\'atica
+	de COOL, as\'i como las reglas de la gram\'atica y las reglas lexicogr\'aficas. Para el
+	an\'alisis lexicogr\'afico se ha utilizado la librer\'ia PLY como generador de Parser,
+	el cual recibe como entrada los dos archivos anteriores y devuelve la tabla de
+	parsing del lenguaje (parsetab.py).
+	\item Semantics: Este m\'odulo encierra la l\'ogica para el an\'alisis sem\'antico del lenguaje, por lo que contiene implementaciones de conceptos
+	y estructuras de datos que se usan para resolver problemas de tipos y herencia, importantes en esta fase
+	del compilador. Contiene los ficheros semantics (semantics.py) y scope (scope.py).
+	\item GeneratingCIL y GeneratingMIPS: Estos m\'odulos est\'an compuestos por los generadores de CIL y MIPS,
+	por lo que contiene la l\'ogica para generar un AST de CIL a partir de uno de
+	COOL y luego generar c\'odigo MIPS a partir del AST de CIL.
+	\item Utils: Este m\'odulo contiene las implementaciones de conceptos b\'asicos del
+	compilador como las jerarqu\'ias de AST para COOL y CIL, contiene un fichero con la definici\'on de la gram\'atica
+	de COOL y la implementaci\'on del patr\'on
+	visitor el cu\'al es usado para el chequeo sem\'antico y la generaci\'on de c\'odigo.
+\end{enumerate}
+\section{An\'alisis Lexicogr\'afico}
+Para esta fase del compilador fue usada la librer\'ia de Python PLY como generador de
+Lexer y Parser.
+Para ello fue necesario definir las reglas lexicogr\'aficas tales como las palabras reservadas
+del lenguaje, la definici\'on de los tokens, etc.
+Adem\'as PLY, necesita como entrada, la definici\'on de las reglas de la gram\'atica del
+lenguaje, la cu\'al no es m\'as que una clase que contiene un m\'etodo para cada producci\'on
+(regla) de la gram\'atica. Dicha gram\'atica presentaba conflicto Shif-Reduce pero
+el generador de parser erradic\'o satisfactoriamente esta contradicci\'on construyendo un
+parser LALR para la gram\'atica.
+\section{An\'alisis Sem\'antico}
+En la presente secci\'on se expone como se verifica el uso correcto de tipos que
+exige COOL. Para ello se hizo uso del patr\'on visitor de forma que, recorriendo
+los nodos del AST, se logra chequear el cumplimiento de las reglas de tipado
+presentes en COOL. Debido a que en COOL, es posible
+usar una clase que a\'un no ha sido definida; o sea, que la definici\'on de dicha clase se
+encuentre despu\'es de la l\'inea de c\'odigo donde se usa; entonces es necesario comprobar
+primero que dicha clase y sus miembros realmente existen, para despu\'es conformar la
+jerarqu\'ia de tipos y por \'ultimo hacer el chequeo sem\'antico. Estas son las estructuras
+involucradas en este proceso:
+\begin{enumerate}
+	\item Types Collector: Se encarga de darle una pasada al c\'odigo para coleccionar todos
+	los tipos definidos en el programa.
+	\item Types Builder: Una vez conocidos todos los tipos involucrados en el programa en
+	cuesti\'on, esta estructura se encarga de formar la jerarqu\'ia de tipos.
+	\item Types Checker: Una vez conocida la jerarqu\'ia de tipos definida en el programa,
+	esta estructura se encarga de realizar el chequeo de tipos de cada una de las
+	expresiones definidas en el programa.
+\end{enumerate}
+Para el an\'alisis sem\'antico fue necesario implementar ciertas estructuras de datos(class Scope y class Type) que permitieran encapsular toda la informaci\'on sem\'antica de un programa, estas se encuentran en scope.py.
+En la clase Type se implement\'o un algor\'itmo "conform" que permite, seg\'un la definici\'on dada en el manual de Cool, saber si un tipo conforma a otro. Tambi\'en se implement\'o una funci\'on, para resolver el tipo de las expresiones case of e if then else, que permite saber el ancestro com\'un m\'as cercano a un par de clases.
+No se contempl\'o el SELF\_TYPE en el proyecto.
+
+\section{Generaci\'on de C\'odigo Intermedio}
+Puede ser muy engorroso y complicado generar c\'odigo a MIPS directamente desde COOL por lo que se utiliza normalmente un punto intermedio entre ambos extremos: Se genera un lenguage intermedio tal que generarlo desde COOL sea m\'as sencillo al igual que generar MIPS partiendo del mismo. Se decidi\'o utilizar el Lenguaje intermedio de 3 direcciones propuesto en el curso (CIL).
+
+\subsection{Clases "built in"}
+COOL cuenta con las siguientes clases "built in": Object, String, Int, Bool, IO.
+Por cada una de estas clases se defini\'o un tipo correspondiente en CIL. Se cre\'o un tipo adicional Void que representa el vac\'io. Se decidi\'o plantear como ra\'iz del \'arbol de herencia de todo programa al tipo Void, sin embargo el \'unico tipo que "hereda" de Void es Object, y, cumpliendo con el manual de COOl, todo tipo distinto a estos "hereda" transitiva o directamente de Object. 
+
+Se decidi\'o tratar con todo objeto de COOL en CIL por referencia. Cada objeto Int en COOL ser\'a representado como una instancia del tipo Int en CIL, teniendo la instancia un atributo "value" que guardar\'a el valor de dicho objeto de COOL. De manera hom\'ologa se representan los objetos Bool y String con la diferencia de que una instancia de tipo String posee solamente un atributo "msg" que act\'ua como puntero a una constante String declarada en la secci\'on "data".
+
+\subsection{Modelaci\'on de clases de COOL}
+Una clase de COOL est\'a compuesta por atributos y funciones que forman los "features" de la clase. Cada tipo de CIL modela un tipo definido en el c\'odigo COOL de entrada (o a los tipos base). Estos tipos cuentan con atributos y funciones definidas exactamente en el siguiente orden:\\
+
+\begin{lstlisting}
+	Type X {
+		[inherited features]
+		<type X attributes>
+		<type X functions>
+	}
+\end{lstlisting}
+
+
+
+Por cada tipo se cre\'o una funci\'on especial, el constructor, que se encarga de inicializar cada atributo como tipo de CIL (crear las instancias de los tipos correspondientes) y aplicar las expresiones inicializadoras de los atributos en COOL a cada atributo correspondiente. Cada vez que se crea una nueva instancia de un tipo (se aloca en memoria), se realiza un llamado, pasando como par\'ametro la nueva instancia, al constructor del tipo. Podr\'ia preocupar el caso siguiente:\\
+\begin{lstlisting}
+	class X{
+		a:Int <- a + 1;
+	}
+\end{lstlisting}
+
+Pero, el constructor, al inicializar todos los atributos previamente a la generaci\'on del c\'odigo de la expresi\'on inicializadora, permite que antes de cualquier operaci\'on sobre cualquier atributo, este mismo, este inicializado con su valor por defecto. Los valores por defecto son:
+Int : 0
+Bool : 0
+String : ""
+Cualquier otro : Void
+
+\subsection{Chequeo de errores}
+En esta fase de compilaci\'on se resuelve el c\'odigo necesario para los errores en runtime siguentes:
+\begin{enumerate}
+	\item La instrucci\'on case (la expresi\'on principal siendo de tipo Void).
+	\item Los llamados de funciones desde una instancia de Void .
+\end{enumerate}
+
+\section{Generaci\'on de C\'odigo Ensamblador}
+El objetivo es compilar para la arquitectura MIPS, por lo que en esta fase se traduce el c\'odigo que encierra el \'arbol de sintaxis abstracta del lenguaje intermedio hacia un fichero con el c\'odigo MIPS equivalente a dicho \'arbol. Para ello ha sido usado nuevamente el patr\'on visitor, por lo que, visitando cada nodo del AST de CIL se genera el c\'odigo MIPS necesario para ejecutar la l\'ogica encerrada en dicho nodo. En esta fase se resuelven e implementan adem\'as los m\'etodos de los tipos b\'asicos de COOL: Object, IO, Int, String y Bool. Para facilitar la implementaci\'on en MIPS de todas las expresiones contenidas en un programa, fue necesario tratar a todas las variables como objetos por referencia, d\'andole por supuesto, sem\'antica por valor a los tipos b\'asicos. Para ello, la informaci\'on de cada objeto est\'a resumida en una tabla (prototipo) con las siguientes filas:\\
+\begin{center}
+\begin{tabular}{cccccc}
+	offset 0 & Class Tag\\
+	offset 4 & Object Size\\
+	offset 8 & Dispatch Pointer\\
+	offset 12 & Attribute 1 \\
+	... & ... \\
+	offset 4(n-1)+12 & Attribute n \\
+\end{tabular}
+\end{center}
+Class Tag: Un entero de 32 bits que representa un identificador \'unico para cada tipo en el programa.\\
+Object Size: Un entero de 32 bits que contiene el tama\~no del prototipo en bytes.\\
+Dispatch Pointer: Un entero de 32 bits que representa la direcci\'on de memoria (referencia) de la tabla de m\'etodos virtuales del tipo con tal Class Tag.\\
+Attribute i: un entero de 32 bits que representa una referencia al prototipo del i-\'esimo atributo del objeto.\\
+
+Para Int, offset 12 contiene el entero de 32 bits que representa ese n\'umero y Object size es 16 bytes, para Bool, offset 12 contiene cero o uno en dependencia del valor de la variable y finalmente para String, offset 12 contiene la referencia a un objecto de tipo Int que contiene el valor del length del String y en offset 16 + i contiene el c\'odigo ASCII del i-\'esimo caracter del String.
+
+
+El uso de estos prototipos, si bien parece un gasto excesivo de memoria, permite resolver de manera muy sencilla problemas como los m\'etodos de Object, as\'i como el problema del Dynamic Dispatch referenciando a un lugar en memoria donde se encuentra una tabla que en el offset 4i contiene la direcci\'on de memoria donde se encuentra la implementaci\'on en concreto del i-\'esimo m\'etodo del tipo con dicho Class Tag.
+
+En esta fase adem\'as se detectan errores en tiempo de ejecuci\'on tales como divisi\'on por cero, memory overflow y substring is out of range.
+
+\end{document}
